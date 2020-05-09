@@ -31,11 +31,13 @@ class MyDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         # return the file and label of the corresponding index
-        label = os.path.basename(self.files[idx]).split(".")[0]
+        animal = os.path.basename(self.files[idx]).split(".")[0]
+        label = 0 if animal=="dog" else 1
         image = Image.open(self.files[idx]).convert('L')
         
         if self.transform is not None:
             image = self.transform(image)
+
         return (image, label)
 
     def __len__(self):
@@ -59,7 +61,7 @@ class MyModel(nn.Module):
 
         # 28x28x1 => 26x26x32
         self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3)
-        self.d1 = nn.Linear(26 * 26 * 32, 128)
+        self.d1 = nn.Linear(98 * 98 * 32, 128)
         self.d2 = nn.Linear(128, 10)
 
     def forward(self, x):

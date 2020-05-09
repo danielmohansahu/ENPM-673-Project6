@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-Code taken from:
+Code adapted from:
 https://colab.research.google.com/github/omarsar/pytorch_notebooks/blob/master/pytorch_quick_start.ipynb#scrollTo=BZz7LAewgGAK
 """
-
 
 import torch
 import torch.nn as nn

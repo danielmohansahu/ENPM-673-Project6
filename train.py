@@ -18,12 +18,13 @@ BATCH_SIZE = 32
 
 ## transformations
 transform = transforms.Compose(
-    [transforms.ToTensor()])
+    [transforms.Resize((100,100)), transforms.ToTensor()])
 
 class MyDataset(torch.utils.data.Dataset):
-    def __init__(self, filepath, train):
+    def __init__(self, filepath, train, transform=None):
         super(MyDataset).__init__()
         self.train = train
+        self.transform = transform
 
         # find all files
         self.files = glob.glob(filepath + "*.jpg")
@@ -31,18 +32,18 @@ class MyDataset(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         # return the file and label of the corresponding index
         label = os.path.basename(self.files[idx]).split(".")[0]
-        image = Image.open(self.files[idx])
-        data = np.asarray(image)
-        data = torch.from_numpy(np.asarray(image)).float()
-        print(data.shape)
-        return (data, label)
+        image = Image.open(self.files[idx]).convert('L')
+        
+        if self.transform is not None:
+            image = self.transform(image)
+        return (image, label)
 
     def __len__(self):
         return len(self.files)
 
 
 ## download and load training dataset
-trainset = MyDataset("./data/dogs-vs-cats/train/", train=True)
+trainset = MyDataset("./data/dogs-vs-cats/train/", True, transform)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
                                           shuffle=True, num_workers=2)
 

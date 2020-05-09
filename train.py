@@ -4,6 +4,10 @@ Code adapted from:
 https://colab.research.google.com/github/omarsar/pytorch_notebooks/blob/master/pytorch_quick_start.ipynb#scrollTo=BZz7LAewgGAK
 """
 
+import os
+import glob
+from PIL import Image
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -16,17 +20,37 @@ BATCH_SIZE = 32
 transform = transforms.Compose(
     [transforms.ToTensor()])
 
+class MyDataset(torch.utils.data.Dataset):
+    def __init__(self, filepath, train):
+        super(MyDataset).__init__()
+        self.train = train
+
+        # find all files
+        self.files = glob.glob(filepath + "*.jpg")
+
+    def __getitem__(self, idx):
+        # return the file and label of the corresponding index
+        label = os.path.basename(self.files[idx]).split(".")[0]
+        image = Image.open(self.files[idx])
+        data = np.asarray(image)
+        data = torch.from_numpy(np.asarray(image)).float()
+        print(data.shape)
+        return (data, label)
+
+    def __len__(self):
+        return len(self.files)
+
+
 ## download and load training dataset
-trainset = torchvision.datasets.MNIST(root='./data', train=True,
-                                        download=True, transform=transform)
+trainset = MyDataset("./data/dogs-vs-cats/train/", train=True)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
                                           shuffle=True, num_workers=2)
 
 ## download and load testing dataset
-testset = torchvision.datasets.MNIST(root='./data', train=False,
-                                       download=True, transform=transform)
-testloader = torch.utils.data.DataLoader(testset, batch_size=BATCH_SIZE,
-                                         shuffle=False, num_workers=2)
+# testset = torchvision.datasets.MNIST(root='./data', train=False,
+#                                        download=True, transform=transform)
+# testloader = torch.utils.data.DataLoader(testset, batch_size=BATCH_SIZE,
+#                                          shuffle=False, num_workers=2)
 
 class MyModel(nn.Module):
     def __init__(self):
@@ -106,11 +130,11 @@ for epoch in range(num_epochs):
     print('Epoch: %d | Loss: %.4f | Train Accuracy: %.2f' \
           %(epoch, train_running_loss / i, train_acc/i))  
 
-test_acc = 0.0
-for i, (images, labels) in enumerate(testloader, 0):
-    images = images.to(device)
-    labels = labels.to(device)
-    outputs = model(images)
-    test_acc += get_accuracy(outputs, labels, BATCH_SIZE)
-        
-print('Test Accuracy: %.2f'%( test_acc/i))
+# test_acc = 0.0
+# for i, (images, labels) in enumerate(testloader, 0):
+#     images = images.to(device)
+#     labels = labels.to(device)
+#     outputs = model(images)
+#     test_acc += get_accuracy(outputs, labels, BATCH_SIZE)
+#         
+# print('Test Accuracy: %.2f'%( test_acc/i))

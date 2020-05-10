@@ -11,9 +11,10 @@ from custom.data import MyDataset
 from custom.model import MyModel, get_accuracy
 
 BATCH_SIZE = 32
-IMG_SHAPE = (400,400)
+MAX_IMGS = 1000
+IMG_SHAPE = (300,300)
 LEARNING_RATE = 0.001
-NUM_EPOCHS = 5
+NUM_EPOCHS = 10
 
 if __name__ == "__main__":
     ## prepare dataset
@@ -21,9 +22,9 @@ if __name__ == "__main__":
     transform = transforms.Compose(
         [transforms.Resize(IMG_SHAPE), transforms.ToTensor()])
     
-    trainset = MyDataset("./data/dogs-vs-cats/train/", True, transform)
+    trainset = MyDataset("./data/dogs-vs-cats/train/",  transform, MAX_IMGS)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
-                                              shuffle=True, num_workers=2)
+                                              shuffle=True, num_workers=4)
     
     # instantiate model and prepare GPU 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -61,6 +62,6 @@ if __name__ == "__main__":
         print('Epoch: %d | Loss: %.4f | Train Accuracy: %.2f' \
               %(epoch, train_running_loss / i, train_acc/i))  
 
-    import code
-    code.interact(local=locals())
+    # import code
+    # code.interact(local=locals())
     

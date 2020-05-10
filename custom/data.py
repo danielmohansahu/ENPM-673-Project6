@@ -7,13 +7,17 @@ from PIL import Image
 import torch
 
 class MyDataset(torch.utils.data.Dataset):
-    def __init__(self, filepath, train, transform=None):
+    def __init__(self, filepath, transform=None, num_imgs=None):
         super(MyDataset).__init__()
-        self.train = train
+        self.num_imgs = num_imgs
         self.transform = transform
 
         # find all files
         self.files = glob.glob(filepath + "*.jpg")
+        
+        # limit the number of images (if specified)
+        if self.num_imgs is not None:
+            self.files = [f for f in self.files if int(os.path.basename(f).split(".")[1]) <= self.num_imgs]
 
     def __getitem__(self, idx):
         # return the file and label of the corresponding index

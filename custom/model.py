@@ -9,10 +9,18 @@ class MyModel(nn.Module):
     def __init__(self, img_shape):
         super(MyModel, self).__init__()
 
-        # 28x28x1 => 26x26x32
-        self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3)
-        self.d1 = nn.Linear((img_shape[0]-2) * (img_shape[1]-2) * 32, 128)
-        self.d2 = nn.Linear(128, 10)
+        ## define layers
+
+        # convolution layer
+        c_out = 5
+        c_kernel = 10
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=c_out, kernel_size=c_kernel)
+
+        # linear layers (note this is a simplified formula assuming default padding, dilation, etc.
+        d1_input = c_out * (img_shape[0]-c_kernel+1) * (img_shape[1]-c_kernel+1)
+        d1_output = 64
+        self.d1 = nn.Linear(d1_input, d1_output)
+        self.d2 = nn.Linear(d1_output, 2)
 
     def forward(self, x):
         # 32x1x28x28 => 32x32x26x26

@@ -5,3 +5,4 @@ data/MNIST
 
 # other
 *.swp
+__pycache__/

@@ -16,7 +16,7 @@ BATCH_SIZE = 100
 MAX_IMGS = 1000
 IMG_SHAPE = (50,50)
 LEARNING_RATE = 0.001
-NUM_EPOCHS = 10
+NUM_EPOCHS = 20
 
 if __name__ == "__main__":
     ## prepare dataset

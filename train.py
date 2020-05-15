@@ -7,20 +7,26 @@ https://colab.research.google.com/github/omarsar/pytorch_notebooks/blob/master/p
 import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
+from matplotlib import pyplot as plt
 from custom.data import MyDataset
 from custom.model import MyModel, get_accuracy
 
-BATCH_SIZE = 32
+BATCH_SIZE = 100
+
 MAX_IMGS = 1000
-IMG_SHAPE = (300,300)
+IMG_SHAPE = (200,200)
 LEARNING_RATE = 0.001
-NUM_EPOCHS = 10
+NUM_EPOCHS = 25
 
 if __name__ == "__main__":
     ## prepare dataset
     
     transform = transforms.Compose(
-        [transforms.Resize(IMG_SHAPE), transforms.ToTensor()])
+        [transforms.Resize(IMG_SHAPE),
+         #transforms.RandomResizedCrop(50),
+         transforms.RandomHorizontalFlip(),
+         transforms.ToTensor()
+        ])
     
     trainset = MyDataset("./data/dogs-vs-cats/train/",  transform, MAX_IMGS)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
@@ -31,9 +37,12 @@ if __name__ == "__main__":
     model = MyModel(IMG_SHAPE)
     model = model.to(device)
     criterion = nn.CrossEntropyLoss()
+    #criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
     
     # train
+    result_accuracy = []
+    result_loss = []
     for epoch in range(NUM_EPOCHS):
         train_running_loss = 0.0
         train_acc = 0.0
@@ -59,9 +68,16 @@ if __name__ == "__main__":
             train_acc += get_accuracy(logits, labels, BATCH_SIZE)
         
         model.eval()
+        result_accuracy.append(train_acc/i)
+        result_loss.append(train_running_loss/i)
         print('Epoch: %d | Loss: %.4f | Train Accuracy: %.2f' \
               %(epoch, train_running_loss / i, train_acc/i))  
 
-    # import code
-    # code.interact(local=locals())
-    
+    # plot the results
+    fig,axs = plt.subplots(2)
+    fig.suptitle("Training Results")
+    axs[0].plot(range(NUM_EPOCHS), result_accuracy)
+    axs[0].set(ylabel="Accuracy")
+    axs[1].plot(range(1,NUM_EPOCHS+1), result_loss)
+    axs[1].set(xlabel="Epoch",ylabel="Loss")
+    plt.show()

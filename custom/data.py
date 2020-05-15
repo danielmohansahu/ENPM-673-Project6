@@ -2,6 +2,7 @@
 """
 
 import os
+import random
 import glob
 from PIL import Image
 import torch
@@ -14,10 +15,11 @@ class MyDataset(torch.utils.data.Dataset):
 
         # find all files
         self.files = glob.glob(filepath + "*.jpg")
+        random.shuffle(self.files)
         
         # limit the number of images (if specified)
         if self.num_imgs is not None:
-            self.files = [f for f in self.files if int(os.path.basename(f).split(".")[1]) <= self.num_imgs]
+            self.files = self.files[:self.num_imgs]
 
     def __getitem__(self, idx):
         # return the file and label of the corresponding index

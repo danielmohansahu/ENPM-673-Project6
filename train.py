@@ -11,9 +11,10 @@ from matplotlib import pyplot as plt
 from custom.data import MyDataset
 from custom.model import MyModel, get_accuracy
 
-BATCH_SIZE = 500
-MAX_IMGS = 5000
-IMG_SHAPE = (250,250)
+BATCH_SIZE = 100
+
+MAX_IMGS = 1000
+IMG_SHAPE = (200,200)
 LEARNING_RATE = 0.001
 NUM_EPOCHS = 25
 

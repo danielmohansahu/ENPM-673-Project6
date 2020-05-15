@@ -14,9 +14,9 @@ from custom.model import MyModel, get_accuracy
 BATCH_SIZE = 100
 
 MAX_IMGS = 1000
-IMG_SHAPE = (50,50)
+IMG_SHAPE = (200,200)
 LEARNING_RATE = 0.001
-NUM_EPOCHS = 10
+NUM_EPOCHS = 25
 
 if __name__ == "__main__":
     ## prepare dataset
@@ -25,9 +25,7 @@ if __name__ == "__main__":
         [transforms.Resize(IMG_SHAPE),
          #transforms.RandomResizedCrop(50),
          transforms.RandomHorizontalFlip(),
-         
          transforms.ToTensor()
-         #transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
     
     trainset = MyDataset("./data/dogs-vs-cats/train/",  transform, MAX_IMGS)
@@ -79,6 +77,7 @@ if __name__ == "__main__":
     fig,axs = plt.subplots(2)
     fig.suptitle("Training Results")
     axs[0].plot(range(NUM_EPOCHS), result_accuracy)
+    axs[0].set(ylabel="Accuracy")
     axs[1].plot(range(1,NUM_EPOCHS+1), result_loss)
-    axs[1].set(xlabel="Epoch")
+    axs[1].set(xlabel="Epoch",ylabel="Loss")
     plt.show()

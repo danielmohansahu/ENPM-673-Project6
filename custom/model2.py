@@ -25,9 +25,9 @@ class MyModel(nn.Module):
         self.conv1 = nn.Conv2d(in_channels=1, out_channels=c_out, kernel_size=c_kernel)
         self.conv2 = nn.Conv2d(32, 64 ,kernel_size=c_kernel)
         self.conv3 = nn.Conv2d(64,128,kernel_size=c_kernel)
-        x = torch.randn(50,50).view(-1,1,50,50)
-        self._to_linear = None
-        self.convs(x)
+        #x = torch.randn(50,50).view(-1,1,50,50)
+        #self._to_linear = None
+        #self.convs(x)
         self.fc1 = nn.Linear(self._to_linear, 512)
         self.fc2 = nn.Linear(512, 2)
 

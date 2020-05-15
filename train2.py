@@ -16,7 +16,7 @@ BATCH_SIZE = 100
 MAX_IMGS = 1000
 IMG_SHAPE = (50,50)
 LEARNING_RATE = 0.001
-NUM_EPOCHS = 10
+NUM_EPOCHS = 20
 
 if __name__ == "__main__":
     ## prepare dataset
@@ -26,8 +26,8 @@ if __name__ == "__main__":
          #transforms.RandomResizedCrop(50),
          transforms.RandomHorizontalFlip(),
          
-         transforms.ToTensor()
-         #transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+         transforms.ToTensor(),
+         transforms.Normalize([0.5, 0.5 ], [0.5, 0.5])
         ])
     
     trainset = MyDataset("./data/dogs-vs-cats/train/",  transform, MAX_IMGS)

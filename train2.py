@@ -33,6 +33,12 @@ if __name__ == "__main__":
     trainset = MyDataset("./data/dogs-vs-cats/train/",  transform, MAX_IMGS)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
                                               shuffle=True, num_workers=4)
+    ## download and load testing dataset
+    testset = MyDataset("./data/dogs-vs-cats/train/", transform, MAX_IMGS)
+
+    testloader = torch.utils.data.DataLoader(testset, batch_size=BATCH_SIZE,
+                                         shuffle=False, num_workers=4)
+    
     
     # instantiate model and prepare GPU 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -73,7 +79,14 @@ if __name__ == "__main__":
         result_accuracy.append(train_acc/i)
         result_loss.append(train_running_loss/i)
         print('Epoch: %d | Loss: %.4f | Train Accuracy: %.2f' \
-              %(epoch, train_running_loss / i, train_acc/i))  
+              %(epoch, train_running_loss / i, train_acc/i))
+        
+    for i, (images, labels) in enumerate(testloader, 0):
+        images = images.to(device)
+        labels = labels.to(device)
+        outputs = model(images)
+        test_acc += get_accuracy(outputs, labels, BATCH_SIZE)
+        print('Test Accuracy: %.2f'%( test_acc/(i+1)))
 
     # plot the results
     fig,axs = plt.subplots(2)

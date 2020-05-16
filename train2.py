@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
 from custom.data import MyDataset
-from custom.model import MyModel, get_accuracy
+from custom.model2 import MyModel, get_accuracy
 import numpy as np
 import matplotlib.pyplot as plt
 

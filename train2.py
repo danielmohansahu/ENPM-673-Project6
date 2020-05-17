@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+/bin/env python3
 """
 Code adapted from:
 https://colab.research.google.com/github/omarsar/pytorch_notebooks/blob/master/pytorch_quick_start.ipynb#scrollTo=BZz7LAewgGAK
@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
 from custom.data import MyDataset
-from custom.model2 import MyModel, get_accuracy
+from custom.model import MyModel, get_accuracy
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -18,7 +18,7 @@ BATCH_SIZE = 32
 MAX_IMGS = 1000
 IMG_SHAPE = (50,50)
 LEARNING_RATE = 0.001
-NUM_EPOCHS = 30
+NUM_EPOCHS = 25
 
 if __name__ == "__main__":
     ## prepare dataset
@@ -53,10 +53,14 @@ if __name__ == "__main__":
     result_accuracy = []
     result_loss = []
     result_test_acc = []
+    result_test_loss = []
+    
     # train
     for epoch in range(NUM_EPOCHS):
         train_running_loss = 0.0
         train_acc = 0.0
+        test_running_loss = 0
+        test_acc = 0.0
     
         model = model.train()
     
@@ -84,26 +88,32 @@ if __name__ == "__main__":
         print('Epoch: %d | Train Loss: %.4f | Train Accuracy: %.2f' \
               %(epoch, train_running_loss / i, train_acc/i))
             
-        test_acc = 0.0
+        
     
         for i, (images, labels) in enumerate(testloader, 0):
             images = images.to(device)
             labels = labels.to(device)
             outputs = model(images)
+            loss_test = criterion(outputs, labels)
+            test_running_loss += loss_test.detach().item()
             test_acc += get_accuracy(outputs, labels, BATCH_SIZE)
             avg = np.mean(test_acc)
             
-            #test_running_loss += loss.detach().item()
+        result_test_loss.append(test_running_loss/i)
         result_test_acc.append(avg/i)
         print('Epoch: %d | Test Loss: %.4f | Test Accuracy: %.2f' \
-              %(epoch, train_running_loss / i, test_acc/i))
-'''
+              %(epoch, test_running_loss / i, test_acc/i))
+        
+#plt.plot( result_test_acc)
 # plot the results
 fig,axs = plt.subplots(2)
-fig.suptitle("Training Results")
-axs[0].plot(range(NUM_EPOCHS), result_accuracy)
-axs[0].plot(range(NUM_EPOCHS), result_test_acc)
-axs[1].plot(range(1,NUM_EPOCHS+1), result_loss)
+
+fig.suptitle("Training and Validation Results")
+axs[0].plot(range(NUM_EPOCHS), result_accuracy, label ="Training Accuracy")
+axs[0].plot(range(NUM_EPOCHS), result_test_acc, label = "Validation Accuracy")
+axs[1].plot(range(1,NUM_EPOCHS+1), result_loss, label = "Training Loss")
+axs[1].plot(range(1,NUM_EPOCHS+1), result_test_loss, label = "Validation Loss")
 axs[1].set(xlabel="Epoch",ylabel="Loss")
+axs[0].legend()
+axs[1].legend()
 plt.show()
-'''
